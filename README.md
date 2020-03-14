@@ -216,3 +216,61 @@
 
 8.18: Retrieve the node to confirm that the property has been removed.
 > $match(p:Person) where p.name = "Robin Wright" return p
+
+9.1: Create ACTED_IN relationships.
+> $match(m:Movie) where m.title = 'Forrest Gump' match(p:Person) where p.name = 'Tom Hanks' or p.name = 'Robin Wright' or p.name = 'Gary Sinise' create (p)-[:ACTED_IN]->(m)
+
+9.2: Create DIRECTED relationships.
+> $match(m:Movie) where m.title = 'Forrest Gump' match(p:Person) where p.name = 'Robert Zemeckis' create (p)-[:DIRECTED]->(m)
+
+9.3: Create a HELPED relationship.
+> $match(a:Person) where a.name = 'Tom Hanks' match(p:Person) where p.name = 'Gary Sinise' create(a)-[:HELPED]->(p)
+
+9.4: Query nodes and new relationships.
+> $match(p:Person)-[rel]-(m:Movie) where m.title = 'Forrest Gump' return p, rel, m
+
+9.5: Add properties to relationships.
+> $match(p:Person)-[rel:ACTED_IN]->(m:Movie) where m.title = 'Forrest Gump' set rel.roles = case p.name when 'Tom Hanks' then ['Forrest Gump'] when 'Robin Wright' then ['Jenny Curran'] when 'Gary Sinise' then ['Lieutenant Dan Taylor'] end
+
+9.6: Add a property to the HELPED relationship.
+> $match(a:Person)-[rel:HELPED]->(p:Person) where a.name = 'Tom Hanks' and p.name = 'Gary Sinise' set rel.research = 'war history'
+
+9.7: View the current list of property keys in the graph.
+> $call db.propertyKeys()
+
+9.8: View the current schema of the graph.
+> $call db.schema()
+
+9.9: Retrieve the names and roles for actors.
+> $match(p:Person)-[rel:ACTED_IN]->(m:Movie) where m.title = 'Forrest Gump' return rel.roles, p.name
+
+9.10: Retrieve information about any specific relationships.
+> $match(a:Person)-[rel:HELPED]-(p:Person) return a.name, rel, p.name
+
+9.11: Modify a property of a relationship.
+> $match(p:Person)-[rel:ACTED_IN]->(m:Movie) where m.title = 'Forrest Gump'and p.name = 'Gary Sinise' set rel.roles = 'Lt. Dan Taylor'
+
+9.12: Remove a property from a relationship.
+> $match(a:Person)-[rel:HELPED]->(p:Person) where a.name = 'Tom Hanks' and p.name = 'Gary Sinise' remove rel.research
+
+9.13: Confirm that your modifications were made to the graph.
+> $match(a:Person)-[rel:HELPED]->(p:Person) where a.name = 'Tom Hanks' and p.name = 'Gary Sinise' return a, rel, p
+
+10.1: Delete a relationship.
+> $match(a:Person)-[rel:HELPED]->(p:Person) delete rel
+
+10.2: Confirm that the relationship has been deleted.
+> $match(a:Person)-[rel:HELPED]->(p:Person) return a, rel, p
+
+10.3: Retrieve a movie and all of its relationships.
+> $match(p:Person)-[rel]->(m:Movie) where m.title = 'Forrest Gump' return p, rel, m
+
+10.4: Try deleting a node without detaching its relationships.
+> $match(m:Movie) where m.title = 'Forrest Gump' delete m
+
+10.5: Delete a Movie node, along with its relationships.
+> $match(m:Movie) where m.title = 'Forrest Gump' detach delete m
+
+10.6: Confirm that the Movie node has been deleted.
+> $match(m:Movie) where m.title = 'Forrest Gump' return m
+
