@@ -274,3 +274,47 @@
 10.6: Confirm that the Movie node has been deleted.
 > $match(m:Movie) where m.title = 'Forrest Gump' return m
 
+11.1: Use MERGE to create a Movie node
+> $merge(m:Movie {title: 'Forrest Gump'}) on create set m.released = 1994 return m
+
+11.2: Use MERGE to update a node
+> $merge (m:Movie {title: 'Forrest Gump'}) on create set m.released = 1994 on match set m.tagline = 'Life is like a box of chocolates... you never know what you`re gonna get.' return m
+
+11.3: Use MERGE to create a Production node
+> $merge (p:Production {title: 'Forrest Gump'}) on create set p.year = 1994 return p
+
+11.4: Find all labels for nodes with a property value
+> $match (m) where m.title = 'Forrest Gump' return labels(m)
+
+11.5: Use MERGE to update a Production node
+> $merge (p:Production {title: 'Forrest Gump'}) on match set p.company = 'Paramount Pictures' return p
+
+11.6: Use MERGE to add a label to a node
+> $merge (m:Movie {title: 'Forrest Gump'}) on match set m:OlderMovie return labels(m)
+
+11.7: Use MERGE to create two nodes and a single relationship 
+> $merge (p:Person {name: 'Robert Zemeckis'})-[:DIRECTED]->(m {title: 'Forrest Gump'})
+
+11.8: Use the same MERGE statement to attempt to create two nodes and a single relationship
+> $11.8: Use the same MERGE statement to attempt to create two nodes and a single relationship
+
+11.9: Find the correct Person node to delete
+> $match (p:Person {name: 'Robert Zemeckis'})-[rel]-(x) where not exists(p.born) return p, rel, x
+
+11.10: Delete this Person node, along with its relationships
+> $match (p:Person {name:'Robert Zemeckis'})--() where not exists(p.born) detach delete p
+
+11.11: Find the correct Forrest Gump node to delete
+> $match(m) where m.title = 'Forrest Gump' and labels(m) = [] return m, labels(m)
+
+11.12: Delete the Forrest Gump node
+> $match(m) where m.title = 'Forrest Gump' and labels(m) = [] detach delete m
+
+11.13: Use MERGE to create the DIRECTED relationship
+> $match(p:Person), (m:Movie) where p.name = 'Robert Zemeckis' and m.title = 'Forrest Gump' merge (p)-[:DIRECTED]->(m)
+
+11.14: Use MERGE to create the ACTED_IN relationship
+> $match (p:Person), (m:Movie) where p.name in ['Tom Hanks', 'Gary Sinise', 'Robin Wright'] and m.title = 'Forrest Gump' merge (p)-[:ACTED_IN]->(m)
+
+11.15: Modify the role relationship property
+> $match(p:Person)-[rel:ACTED_IN]->(m:Movie) where m.title = 'Forrest Gump' set rel.roles = case p.name when 'Tom Hanks' then 'Forrest Gump' when 'Robin Wright' then 'Jenny Curran' when 'Gary Sinise' then 'Lt. Dan Taylor' end
