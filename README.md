@@ -151,68 +151,68 @@
 > $match(p:Person)-[:ACTED_IN]->(m:Movie) with p, count(m) as qtdFilmes, collect(m.title) as filmes where qtdFilmes <= 3 return p.name, filmes
 
 7.1: Collect and use lists.
-> $
+> $match(a:Person)-[:ACTED_IN]->(m:Movie), (m)<-[:PRODUCED]-(p:Person) with m, collect(distinct a.name) as atores, collect(distinct p.name) as produtores return m.title, atores, produtores order by size(atores)
 
 7.2: Collect a list.
-> $
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) with p, collect(m) as filmes where size(filmes) > 5 return p.name, filmes
 
 7.3: Unwind a list.
-> $
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) with p, collect(m) as filmes where size(filmes) > 5 with p, filmes unwind filmes as filme return p.name, filme.title
 
 7.4: Perform a calculation with the date type.
-> $
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) where p.name = 'Tom Hanks' return m.title, m.released, date().year - m.released as anos, m.released - p.born as idade order by anos 
 
 
 8.1: Create a Movie node.
-> $
+> $create(:Movie {title: 'Forrest Gump'})
 
 8.2: Retrieve the newly created node.
-> $
+> $match(m:Movie {title:'Forrest Gump'}) return m
 
 8.3: Create a Person node.
-> $
+> $create(:Person {name:'Robin Wright'})
 
 8.4: Retrieve the newly created node.
-> $
+> $match(p:Person {name:'Robin Wright'}) return p
 
 8.5: Add a label to a node.
-> $
+> $match(m:Movie) where m.released < 2010 set m:OlderMovie return distinct labels(m)
 
 8.6: Retrieve the node using the new label.
-> $
+> $match(m:OlderMovie) return m.title, m.released
 
 8.7: Add the Female label to selected nodes.
-> $
+> $match(p:Person) where p.name starts with 'Robin' set p:Female
 
 8.8: Retrieve all Female nodes.
-> $
+> $match(p:Female) return p.name
 
 8.9: Remove the Female label from the nodes that have this label.
-> $
+> $match(p:Female) remove p:Female
 
 8.10: View the current schema of the graph.
-> $
+> $call db.schema
 
 8.11: Add properties to a movie.
-> $
+> $match(m:Movie) where m.title = 'Forrest Gump' set m:OlderMovie, m.released = 1994, m.tagline = 'Life is like a box of chocolates.. you never know what you`re gonna get.', m.lengthInMinutes = 142
 
 8.12: Retrieve an OlderMovie node to confirm the label and properties.
-> $
+> $match(m:OlderMovie) where m.title = 'Forrest Gump' return m
 
 8.13: Add properties to the person, Robin Wright.
-> $
+> $match(p:Person) where p.name = 'Robin Wright' set p.born = 1996, p.birthPlace = 'Dallas'
 
 8.14: Retrieve an updated Person node.
-> $
+> $match(p:Person) where p.name = 'Robin Wright' return p
 
 8.15: Remove a property from a Movie node.
-> $
+> $match(m:Movie) where m.title = 'Forrest Gump' set m.lengthInMinutes = null
 
 8.16: Retrieve the node to confirm that the property has been removed.
-> $
+> $match(m:Movie) where m.title = 'Forrest Gump' return m
 
 8.17: Remove a property from a Person node.
-> $
+> $match(p:Person) where p.name = 'Robin Wright' set p.birthPlace = null
 
 8.18: Retrieve the node to confirm that the property has been removed.
-> $
+> $match(p:Person) where p.name = "Robin Wright" return p
