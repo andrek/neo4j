@@ -1,4 +1,4 @@
-# neo4j
+# Práticas da disciplina de Banco de Dados Não Relacionais (neo4j)
 
 1.1 Write a query to retrieve all nodes from the database.
 > $match(n) return n
