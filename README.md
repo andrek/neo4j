@@ -99,5 +99,120 @@
 4.13: Retrieve the movies that have an actor’s role that is the name of the movie. 
 > $match(p:Person)-[rel:ACTED_IN]->(m:Movie) where m.title in rel.roles return m.title, rel.roles, p.name
 
+5.1: Retrieve data using multiple MATCH patterns.
+> $match(a:Person)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Person), (c:Person)-[:ACTED_IN]->(m) where a.name = 'Tom Hanks' return m.title as Ator, d.name as Diretor, c.name as `Co-Ator`
+
+5.2: Retrieve particular nodes that have a relationship.
+> $match(p1:Person)-[:FOLLOWS]-(p2:Person) where p1.name = 'James Thompson' return p1, p2
+
+5.3: Modify the query to retrieve nodes that are exactly three hops away.
+> $match(p1:Person)-[:FOLLOWS*3]-(p2:Person) where p1.name = 'James Thompson' return p1, p2
+
+5.4: Modify the query to retrieve nodes that are one and two hops away.
+> $match(p1:Person)-[:FOLLOWS*1..2]-(p2:Person) where p1.name = 'James Thompson' return p1, p2
+
+5.5: Modify the query to retrieve particular nodes that are connected no matter how many hops are required.
+> $match(p1:Person)-[:FOLLOWS*]-(p2:Person) where p1.name = 'James Thompson' return p1, p2
+
+5.6: Specify optional data to be retrieved during the query.
+> $match(p:Person) where p.name STARTS WITH 'Tom' optional match(p)-[:DIRECTED]->(m:Movie) return p.name, m.title
+
+5.7: Retrieve nodes by collecting a list.
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) return p.name, collect(m.title) as Filmes
+
+5.9: Retrieve nodes as lists and return data associated with the corresponding lists.
+> $match(p:Person)-[:REVIEWED]-(m:Movie) return m.title, count(p), collect(p.name)
+
+5.10: Retrieve nodes and their relationships as lists.
+> $match(d:Person)-[:DIRECTED]->(m:Movie)<-[:ACTED_IN]-(a:Person) return d.name, count(distinct a) as QtdAtores, collect(distinct a.name) as ListaAtores
+
+5.11: Retrieve the actors who have acted in exactly five movies.
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) with p, count(p) as qtd, collect(m.title) as filmes where qtd = 5 return p.name, filmes
+
+5.12: Retrieve the movies that have at least 2 directors with other optional data.
+> $match(m:Movie) with m, size((:Person)-[:DIRECTED]->(m)) as diretores where diretores >= 2 optional match(p:Person)-[:REVIEWED]-(m) return m.title, p.name
+
+6.1: Execute a query that returns duplicate records.
+> $match(p:Person)-[:ACTED_IN]-(m:Movie) where m.released >= 1990 and m.released < 2000 return distinct m.released, m.title, collect(p.name)
+
+6.2: Modify the query to eliminate duplication.
+> $match(p:Person)-[:ACTED_IN]-(m:Movie) where m.released >= 1990 and m.released < 2000 return distinct m.released, collect(m.title), collect(p.name)
+
+6.3: Modify the query to eliminate more duplication.
+> $match(p:Person)-[:ACTED_IN]-(m:Movie) where m.released >= 1990 and m.released < 2000 return distinct m.released, collect(distinct m.title), collect(p.name)
+
+6.4: Sort results returned.
+> $match(p:Person)-[:ACTED_IN]-(m:Movie) where m.released >= 1990 and m.released < 2000 return distinct m.released, collect(distinct m.title), collect(p.name) order by m.released desc
+
+6.5 Retrieve the top 5 ratings and their associated movies.
+> $match(m:Movie)<-[rel:REVIEWED]-(p:Person)return m.title, rel.rating order by rel.rating desc limit 5
+
+6.6: Retrieve all actors that have not appeared in more than 3 movies.
+> $match(p:Person)-[:ACTED_IN]->(m:Movie) with p, count(m) as qtdFilmes, collect(m.title) as filmes where qtdFilmes <= 3 return p.name, filmes
+
+7.1: Collect and use lists.
+> $
+
+7.2: Collect a list.
+> $
+
+7.3: Unwind a list.
+> $
+
+7.4: Perform a calculation with the date type.
+> $
 
 
+8.1: Create a Movie node.
+> $
+
+8.2: Retrieve the newly created node.
+> $
+
+8.3: Create a Person node.
+> $
+
+8.4: Retrieve the newly created node.
+> $
+
+8.5: Add a label to a node.
+> $
+
+8.6: Retrieve the node using the new label.
+> $
+
+8.7: Add the Female label to selected nodes.
+> $
+
+8.8: Retrieve all Female nodes.
+> $
+
+8.9: Remove the Female label from the nodes that have this label.
+> $
+
+8.10: View the current schema of the graph.
+> $
+
+8.11: Add properties to a movie.
+> $
+
+8.12: Retrieve an OlderMovie node to confirm the label and properties.
+> $
+
+8.13: Add properties to the person, Robin Wright.
+> $
+
+8.14: Retrieve an updated Person node.
+> $
+
+8.15: Remove a property from a Movie node.
+> $
+
+8.16: Retrieve the node to confirm that the property has been removed.
+> $
+
+8.17: Remove a property from a Person node.
+> $
+
+8.18: Retrieve the node to confirm that the property has been removed.
+> $
